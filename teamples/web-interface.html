@@ -1,1 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- jQuery CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <!-- Bootstrap CDN-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <!-- Google Custom Font CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Piedra&display=swap" rel="stylesheet">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151015758-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-151015758-2');
+  </script>
+
+<title>EpicML Disney Princess Classification</title>
+
+<style> /*OVERALL----------------------------------------------------------------------*/
+
+span{color: white}
+h2{color: white}
+h1{color: white}
+p{color: white}
+
+/*EXCEPTION for DESCTOP & MOBILE SCREENSIZES--------------------------------------------*/
+@media screen and (max-width: 1200px) {
+/*small----------------------------------------------------------------------*/
+  #page_title {font-size: 40px}
+}
+
+@media screen and (min-width: 809px) {
+/*big----------------------------------------------------------------------*/
+  #page_title {font-size: 70px}
+}
+
+/* Design of UPLOAD picture BUTTON*/
+.js .inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.inputfile + label {
+    max-width: 80%;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    padding: 0.625rem 1.25rem;
+}
+
+.no-js .inputfile + label {
+    display: none;
+}
+
+.inputfile:focus + label,
+.inputfile.has-focus + label {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+}
+
+.inputfile + label svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    fill: currentColor;
+    margin-top: -0.25em;
+    margin-right: 0.25em;
+}
+
+.inputfile-4 + label {
+    color: #d3394c;
+}
+
+.inputfile-4:focus + label,
+.inputfile-4.has-focus + label,
+.inputfile-4 + label:hover {
+    color: #722040;
+}
+
+.inputfile-4 + label figure {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #d3394c;
+    display: block;
+    padding: 20px;
+    margin: 0 auto 10px;
+}
+
+.inputfile-4:focus + label figure,
+.inputfile-4.has-focus + label figure,
+.inputfile-4 + label:hover figure {
+    background-color: #722040;
+}
+
+.inputfile-4 + label svg {
+    width: 100%;
+    height: 100%;
+    fill: #f1e5e6;
+}
+</style>
+
+<style>  /* Predict BUTTON*/
+.animate
+{
+	transition: all 0.5s;
+	-webkit-transition: all 0.5s;
+}
+
+.action-button
+{
+	padding: 10px 40px;
+  margin: 0px 10px 10px 0px;
+	border-radius: 10px;
+	font-family: 'Pacifico', cursive;
+	font-size: 25px;
+	color: #FFF;
+	text-decoration: none;
+}
+
+.blue
+{
+	background-color: #3498DB;
+	border-bottom: 5px solid #2980B9;
+	text-shadow: 0px -2px #2980B9;
+}
+
+.action-button:active
+{
+	transform: translate(0px,5px);
+  -webkit-transform: translate(0px,5px);
+	border-bottom: 1px solid;
+}
+</style>
+
+<style> /*Style -- Progress bar*/
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
+<style>
+  .button {
+   display: inline-block;
+   padding: 15px 25px;
+   font-size: 24px;
+   cursor: pointer;
+   text-align: center;
+   text-decoration: none;
+   outline: none;
+   color: #fff;
+   background-color: #4CAF50;
+   border: none;
+   border-radius: 15px;
+   box-shadow: 0 9px #999;
+  }
+
+  .button:hover {background-color: #3e8e41}
+  .button:active {
+   background-color: #3e8e41;
+   box-shadow: 0 5px #666;
+   transform: translateY(4px);
+  }
+
+  #selected-image {
+     border: 1px solid #ccc;
+     display: inline-block;
+     padding: 6px 12px;
+     cursor: pointer;
+  }
+
+  input[type="file"] {
+     display: none;
+  }
+
+</style>
+</head>
+
+<body style="background: url('/images/background.png')">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a href="http://EpicML.net"><img style="padding-right:7px; width:52px; height:40px; margin-top:5px" src="/images/icon2.png" alt="EpicML"></a>
+      <a class="navbar-brand" href="http://EpicML.net">ML Image Classification</a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse"
+              data-target="#navbarResponsive" aria-controls="navbarResponsive"
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="https://epicml.net/_articles/2020/disney_image_classification/image_classification.php">Machine Learning Model<span class="sr-only">(current)</span></a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" id="about" href="#" onclick="aboutFunction()">About</a>
+            <script>
+              function aboutFunction()
+                {alert("Developer:  Dr. Christoph Mittendorf \nLocation:  Munich, Germany \nInternet:  http://www.epicml.net \nE-Mail:  hello@epicml.net");}
+            </script>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+    <div class="row" style="margin-bottom:30px">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5" id="page_title" style="text-shadow: 2px 2px 4px #000000;font-family: 'Piedra', cursive; ">Machine Learning & Disney Princesses!</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 text-center">
+      <img src="/images/disney_collection.png" alt="" style=" height: 100%; width: 100%; object-fit:contain" >
+      </div>
+    </div>
+
+    <div class="row" style="margin:60px 5px 60px 5px; padding: 15px 0 5px 0; background-color:white; border-radius:2em; opacity: 0.5;">
+      <div class="col-lg-12 text-center">
+      <h2 style="font-size: 40px; text-shadow: 2px 2px 4px white; color:black; font-family: 'Piedra', cursive;">Which Princess do you look like?</h2>
+      </div>
+    </div>
+
+    <div class="box" style=" text-align: center">
+      <input type="file"  id="file-4" class="inputfile inputfile-4" name="file"  accept="image/*" hidden/>
+      <label onclick="LoadFunction()"
+      for="file-4"><figure style="width:150px; height:150px"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg></figure> <span style="color:white">Select a picture</span></label>
+    </div>
+
+   <script>
+    var image_loaded ;
+    image_loaded = 0;
+
+    function LoadFunction() {
+    document.getElementById('uploaded_image_view').style.display = "block";
+    document.getElementById('result_image').src="/images/question_mark.jpg";
+    document.getElementById('result_div').style.display = "none";
+    document.getElementById('detailed_results').style.display = "none";
+    document.getElementById('predict_button_div').style.display = "block";
+
+    image_loaded=1;
+    }
+   </script>
+
+      <div id="uploaded_image_view" class="row" style="padding:1px; text-align: center;  margin:auto; width:252px; display:none">
+          <div class="column" style="padding:1px; text-align: center;  margin:auto; width: 250px;
+                                     box-shadow: 2px 4px 8px 2px rgba(0, 0, 0, 0.2); text-align: center" >
+         <img id="selected-image" src="" style="width:100%; margin-left:auto;margin-right:auto"/>
+         </div>
+      </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="row" style="margin-top:15px">
+      <div class="col-lg-12 text-center">
+        <div class="loader" id="loader" style="display:none; text-align:center"></div>
+      </div>
+    </div>
+
+    <div class="row" id="predict_button_div" style="height:100px; margin-bottom:30px;display:none">
+      <div class="col-lg-12 text-center">
+        <div style="padding:10px;  text-align: center;">
+         <button  value="Upload" type="submit" style="height:100px; font-family: 'Piedra', cursive;" class="action-button shadow animate blue" id="predict-button">Start Machine Learning</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Ending Form   </form> -->
+
+  <div class="container"  id="detailed_results" style="display:none; margin-top:20px">
+    <!-- RESULT TEXT -->
+    <!-- ACTIVE in case prediction arrived -->
+    <div class="row" style="margin:30px 5px 0 5px; padding: 15px 0 5px 0; background-color:white; border-radius:2em; opacity: 0.5;">
+      <div class="col-lg-12 text-center">
+       <h2 style="font-size: 40px; text-shadow: 2px 2px 4px white; color:black; font-family: 'Piedra', cursive">You have a Match!!!</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div id="result_div" style="font-size:34px; color:white; text-align:center; display: block">
+         <span id="best_match_result" style="text-shadow: 2px 2px 4px #000000;"></span>% <span id="best_match_name" style="text-shadow: 2px 2px 4px #000000;"><b>Placeholder</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question Mark Placeholder -->
+    <!-- ACTIVE in case not prediction is here yet -->
+    <div class="row" style="margin-top:10px">
+      <div class="col-lg-12 text-center">
+        <div class="box"
+             style="margin-top: 100px; padding:1px; text-align: center; margin:auto; width: 250px; box-shadow: 2px 4px 8px 2px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); text-align: center">
+          <img id="result_image" src="/images/question_mark.jpg"
+              style="width:100%; display:block; margin-left:auto;margin-right:auto"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="margin:50px 5px 0 5px; padding: 15px 0 5px 0; background-color:white; border-radius:2em; opacity: 0.5;">
+      <div class="col-lg-12 text-center">
+       <h2 style="font-size: 40px; text-shadow: 2px 2px 4px white; color:black; font-family: 'Piedra', cursive">Detailed results</h2>
+      </div>
+    </div>
+
+<style>
+  .detailed_result_image
+   {display:block; margin-left:auto; margin-right:auto; float:right; height:117px; width:117px}
+  .detailed_result_text_title
+   {padding-top:20px; margin:0; display: inline-block; vertical-align: middle; line-height: normal}
+  .detailed_result_text_percent
+   {padding:0; margin:0;display: inline-block; vertical-align: middle; line-height: normal}
+</style>
+
+  <div class="row" style="margin-top:40px"> <!-- ANNA-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/anna.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px;">
+      <p class="detailed_result_text_title">Anna </p>
+        </br>
+      <p id="anna-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- ARIEL-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/ariel.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Ariel </p>
+        </br>
+      <p id="ariel-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- AURORA-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/aurora.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Aurora </p>
+        </br>
+      <p id="aurora-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- BELLE-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/belle.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Belle </p>
+        </br>
+      <p id="belle-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- CINDERELLA-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/cinderella.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Cinderella </p>
+        </br>
+      <p id="cinderella-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- ELSA-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/elsa.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Elsa </p>
+        </br>
+      <p id="elsa-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- JASMINE-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/jasmine.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Jasmine </p>
+        </br>
+      <p id="jasmine-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- MERIDA-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/merida.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Merida </p>
+        </br>
+      <p id="merida-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- MOANA-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/moana.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Moana </p>
+        </br>
+      <p id="moana-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- MULAN-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/mulan.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Mulan </p>
+        </br>
+      <p id="mulan-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- POCAHONTAS-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/pocahontas.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Pocahontas </p>
+        </br>
+      <p id="pocahontas-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- RAPUNZEL-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/rapunzel.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Rapunzel </p>
+        </br>
+      <p id="rapunzel-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+  <div class="row"> <!-- SNOW-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/snow.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Snow White </p>
+        </br>
+      <p id="snow-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+
+
+  <div class="row"> <!-- TIANA-->
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+       <img class="detailed_result_image" src="/images/round/tiana.png"/>
+    </div>
+    <div class="col-4 text-left" style="width:250px; height:150px; font-size:22px">
+      <p class="detailed_result_text_title">Tiana </p>
+        </br>
+      <p id="tiana-prediction" class="detailed_result_text_percent">0.00%</p>
+    </div>
+    <div class="col-2 text-left" style="width:250px; height:150px; font-size:22px"></div>
+  </div>
+</div>
+
+<div class="container">
+<div class="row" style="margin:60px 5px 0px 5px; padding: 15px 0 5px 0; background-color:white; border-radius:2em; opacity: 0.5;">
+  <div class="col-lg-12 text-center">
+  <h2 style="font-size: 40px; text-shadow: 2px 2px 4px white; color:black; font-family: 'Piedra', cursive;">How does it work?</h2>
+  </div>
+</div>
+</div>
+
+<!-- Footer -->
+<footer class="page-footer font-small indigo">
+  <!-- Footer Links -->
+  <div class="container">
+    <hr class="rgba-white-light" style="margin: 0 15%;">
+    <!-- Grid row-->
+    <div class="row d-flex text-center justify-content-center mb-md-0 mb-4"  style="margin:30px 0 30px 0">
+      <!-- Grid column -->
+      <div class="col-12">
+        <p style="line-height: 1.7rem">The image classification application uses a Keras machine learning model that is trained using TensorFlow 2.x. In detail, it is a Convolutional Neutral Network that sits on top of a pretrained ConvNet. This approach is called Transfer Learning. The application runs on Flask, a micro web framework, and is deployed on Google App Engine running Python 3.7.</p>
+        <p style="line-height: 1.7rem">Further details and explanations, as well as most of code work can be found on my blog -  EpicML.net </p>
+      </div>
+    </div>
+
+    <div class="row" style="height:100%">
+      <div class="col-lg-12 text-center" style="height:auto">
+      <img src="/images/convnet.png" alt="" style="padding-top:15px; height: 88%; width: 88%; object-fit:contain" >
+      </div>
+    </div>
+
+    <div class="row text-center d-flex justify-content-center  mb-3"
+         style="padding-top: 20px; margin:0; background-color:white;  opacity: 0.7; border-radius:2em;">
+
+      <div class="col-md-2 mb-3">
+        <h6 class="text-uppercase font-weight-bold">
+          <a href="https://epicml.net/" target="_blank">EpicMl.net</a>
+        </h6>
+      </div>
+
+      <div class="col-md-2 mb-3">
+        <h6 class="text-uppercase font-weight-bold">
+          <a href="https://cloud.google.com/appengine" target="_blank">App Engine</a>
+        </h6>
+      </div>
+
+      <div class="col-md-2 mb-3">
+        <h6 class="text-uppercase font-weight-bold">
+          <a href="https://tensorflow.org/" target="_blank">Tensorflow</a>
+        </h6>
+      </div>
+
+      <div class="col-md-2 mb-3">
+        <h6 class="text-uppercase font-weight-bold">
+          <a href="https://keras.io/" target="_blank">Keras</a>
+        </h6>
+      </div>
+
+      <div class="col-md-2 mb-3">
+        <h6 class="text-uppercase font-weight-bold">
+          <a href="https://flask.palletsprojects.com/en/1.1.x/" target="_blank">Flask</a>
+        </h6>
+      </div>
+    </div>
+
+    <div class="row d-flex text-center justify-content-center" >
+
+      <div class="col-md-8 col-12">
+        <p style="line-height: 1.7rem">The Disney Princesses Classification Model is built purely for educational purposes. In this regard, I do not claim any copyrights on any of the material used to build and run this application. In case you have any questions, feel free to reach out to <i> hello@EpicMl.net </i></p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-copyright text-center py-3" style="margin:30px 0px 0 0px; padding: 15px 0 5px 0; background-color:white;  opacity: 0.5;">2020 -
+    <a href="https://EpicML.net/"> EpicML.net</a>
+  </div>
+
+</footer>
+
+
+  <script >
+      let base64Image;
+      $("#file-4").change(function() {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+        let dataURL = reader.result;
+         $('#selected-image').attr("src", dataURL);
+          base64Image= dataURL.replace(/^data:image\/(png|jpeg);base64,/, "");
+          //alert(base64Image);
+  }
+  reader.readAsDataURL($("#file-4")[0].files[0]);
+  $("#anna-prediction").text("");
+  $("#ariel-prediction").text("");
+  $("#aurora-prediction").text("");
+  $("#belle-prediction").text("");
+  $("#cinderella-prediction").text("");
+  $("#elsa-prediction").text("");
+  $("#jasmine-prediction").text("");
+  $("#merida-prediction").text("");
+  $("#moana-prediction").text("");
+  $("#mulan-prediction").text("");
+  $("#pocahontas-prediction").text("");
+  $("#rapunzel-prediction").text("");
+  $("#snow-prediction").text("");
+  $("#tiana-prediction").text("");
+  });
+
+  $("#predict-button").click(function(event){
+
+
+  if (image_loaded==0){alert("Please select an image.");};
+  if (image_loaded==1){document.getElementById('predict_button_div').style.display = "none";};
+
+  //if (image_loaded==1){alert("Good");
+
+  var l = document.getElementById("loader");
+  if (l.style.display === "none") {
+    l.style.display = "block";
+  };
+
+  let message = {image: base64Image};
+
+  console.log(message);
+  $.post("https://epicml.uc.r.appspot.com/predict", JSON.stringify(message), function(response){
+
+
+      $("#anna-prediction").text(parseFloat(Math.round(response.prediction.anna * 10000 ) / 100)+"%");
+      $("#ariel-prediction").text(parseFloat(Math.round(response.prediction.ariel * 10000 ) / 100)+"%");
+      $("#aurora-prediction").text(parseFloat(Math.round(response.prediction.aurora * 10000 ) / 100)+"%");
+      $("#belle-prediction").text(parseFloat(Math.round(response.prediction.belle * 10000 ) / 100)+"%");
+      $("#cinderella-prediction").text(parseFloat(Math.round(response.prediction.cinderella * 10000 ) / 100)+"%");
+      $("#elsa-prediction").text(parseFloat(Math.round(response.prediction.elsa * 10000 ) / 100)+"%");
+      $("#jasmine-prediction").text(parseFloat(Math.round(response.prediction.jasmine * 10000 ) / 100)+"%");
+      $("#merida-prediction").text(parseFloat(Math.round(response.prediction.merida * 10000 ) / 100)+"%");
+      $("#moana-prediction").text(parseFloat(Math.round(response.prediction.moana * 10000 ) / 100)+"%");
+      $("#mulan-prediction").text(parseFloat(Math.round(response.prediction.mulan * 10000 ) / 100)+"%");
+      $("#pocahontas-prediction").text(parseFloat(Math.round(response.prediction.pocahontas * 10000 ) / 100)+"%");
+      $("#rapunzel-prediction").text(parseFloat(Math.round(response.prediction.rapunzel * 10000 ) / 100)+"%");
+      $("#snow-prediction").text(parseFloat(Math.round(response.prediction.snow * 10000 ) / 100)+"%");
+      $("#tiana-prediction").text(parseFloat(Math.round(response.prediction.tiana * 10000 ) / 100)+"%");
+
+  var list = [];
+
+  if (list !== undefined || list.length != 0) {
+    var x = document.getElementById("result_div");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+  };
+
+  var y = document.getElementById("detailed_results");
+  if (y.style.display === "none") {
+    y.style.display = "block";
+  }
+
+  var l = document.getElementById("loader");
+  if (l.style.display === "block") {
+    l.style.display = "none";
+  }
+
+  }
+  list.push(parseFloat(Math.round( response.prediction.anna * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.ariel * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.aurora * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.belle * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.cinderella * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.elsa * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.jasmine * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.merida * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.moana * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.mulan * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.pocahontas * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.rapunzel * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.snow * 10000 ) / 100));
+  list.push(parseFloat(Math.round( response.prediction.tiana * 10000 ) / 100));
+  //alert([list]);
+
+  var max_value = Math.max.apply(Math, list)
+  var index_max_value = list.indexOf(Math.max.apply(Math, list));
+  //alert(max_value);
+  //alert(index_max_value);
+
+    $("#best_match_result").text(max_value);
+  //alert(index_max_value);
+
+  if(index_max_value==0){$("#best_match_name").text("Anna");}
+  if(index_max_value==1){$("#best_match_name").text("Ariel");}
+  if(index_max_value==2){$("#best_match_name").text("Aurora");}
+  if(index_max_value==3){$("#best_match_name").text("Belle");}
+  if(index_max_value==4){$("#best_match_name").text("Cinderella");}
+  if(index_max_value==5){$("#best_match_name").text("Elsa");}
+  if(index_max_value==6){$("#best_match_name").text("Jasmine");}
+  if(index_max_value==7){$("#best_match_name").text("Merida");}
+  if(index_max_value==8){$("#best_match_name").text("Moana");}
+  if(index_max_value==9){$("#best_match_name").text("Mulan");}
+  if(index_max_value==10){$("#best_match_name").text("Pocahontas");}
+  if(index_max_value==11){$("#best_match_name").text("Rapunzel");}
+  if(index_max_value==12){$("#best_match_name").text("Snow");};
+  if(index_max_value==13){$("#best_match_name").text("Tiana");}
+
+  if(index_max_value==0){document.getElementById('result_image').src="/images/anna.jpg";}
+  if(index_max_value==1){document.getElementById('result_image').src="/images/ariel.jpg";}
+  if(index_max_value==2){document.getElementById('result_image').src="/images/aurora.jpg";}
+  if(index_max_value==3){document.getElementById('result_image').src="/images/belle.jpg";}
+  if(index_max_value==4){document.getElementById('result_image').src="/images/cinderella.jpg";}
+  if(index_max_value==5){document.getElementById('result_image').src="/images/elsa.jpg";}
+  if(index_max_value==6){document.getElementById('result_image').src="/images/jasmine.jpg";}
+  if(index_max_value==7){document.getElementById('result_image').src="/images/merida.jpg";}
+  if(index_max_value==8){document.getElementById('result_image').src="/images/moana.jpg";}
+  if(index_max_value==9){document.getElementById('result_image').src="/images/mulan.jpg";}
+  if(index_max_value==10){document.getElementById('result_image').src="/images/pocahontas.jpg";}
+  if(index_max_value==11){document.getElementById('result_image').src="/images/rapunzel.jpg";}
+  if(index_max_value==12){document.getElementById('result_image').src="/images/snow.jpg";}
+  if(index_max_value==13){document.getElementById('result_image').src="/images/tiana.jpg";}
+
+  });
+  });
+</script>
+
+</body>
+
+</html>
