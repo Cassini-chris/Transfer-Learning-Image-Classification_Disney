@@ -1,0 +1,16 @@
+runtime: python37
+env: standard
+instance_class: F4_HIGHMEM
+
+entrypoint: gunicorn -b :$PORT main:app
+
+env_variables:
+    BUCKET_NAME: "{YOUR GCP BUCKET - where the H5 model is located}"
+    MODEL_FILENAME: "{MODEL_NAME.h5}"
+    
+handlers:
+- url: /images
+  static_dir: templates/images
+
+- url: /.*
+  script: auto
