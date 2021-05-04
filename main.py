@@ -28,9 +28,9 @@ def index():
 
     return render_template('web-interface.html')
 
-os.environ["GCLOUD_PROJECT"] = "{ENTER YOUR CLOUD PROJECT HERE}"
+os.environ["GCLOUD_PROJECT"] = "{ENTER YOUR CLOUD PROJECT}"
 storage_client = storage.Client()
-bucket_name = 'data_flask'
+bucket_name = '{ENTER YOUR BUCKET NAME}'
 model = 'model.h5'
 bucket = storage_client.get_bucket(bucket_name)
 blob = bucket.blob(model)
