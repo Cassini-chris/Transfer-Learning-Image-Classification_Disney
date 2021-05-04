@@ -8,3 +8,5 @@ The project is for educational purposes:
 - Get familiar with Flask
 - Get familiar with GCP Cloud console or Cloud SDK
 - Get familiar with TensorFlow Hub and Transfer Learning
+
+![alt text](https://github.com/[cassini-chris]/[Transfer-Learning-Image-Classification_Disney/_GITHUB/readme/images]/blob/[branch]/backround.jpg?raw=true)
