@@ -9,7 +9,7 @@ The project is for educational purposes:
 - Get familiar with GCP Cloud console or Cloud SDK
 - Get familiar with TensorFlow Hub and Transfer Learning
 
-ML Problem to solve - Image classification:
+### Image classification problem:
 Image classification is a supervised learning problem. We define a set of target classes (in our case Disney Princesses), and train a model to recognize them using labeled example photos. In our example, we will make use of TensorFlow 2.x in order to build, train, and optimize our model.
 
 ![alt text](https://github.com/cassini-chris/Transfer-Learning-Image-Classification_Disney/blob/main/_GITHUB/readme/images/background.png?raw=true)
