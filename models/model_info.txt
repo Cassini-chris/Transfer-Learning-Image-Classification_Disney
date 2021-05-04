@@ -1,0 +1,4 @@
+New model was saved with Tensorflow 2.4.1
+Old model was saved with Tensorflow 2.0.0b0
+
+>> Make sure to adjust the requirements (dependencies file) accordingly for your model use.
