@@ -9,5 +9,5 @@ The project is for educational purposes:
 - Get familiar with GCP Cloud console or Cloud SDK
 - Get familiar with TensorFlow Hub and Transfer Learning
 
-![alt text](https://github.com/[cassini-chris]/[Transfer-Learning-Image-Classification_Disney]/blob/main/_GITHUB/readme/images/background.png?raw=true)
+![alt text](https://github.com/cassini-chris/Transfer-Learning-Image-Classification_Disney/blob/main/_GITHUB/readme/images/background.png?raw=true)
 
