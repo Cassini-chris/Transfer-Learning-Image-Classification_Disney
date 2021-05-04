@@ -69,11 +69,11 @@ def predict():
     print("Image Shape: ", image.shape )
 
     #Resize Tensor
-    image = tf.image.resize(image, [150, 150])
+    image = tf.image.resize(image, [224, 224])
     print("TF Image Resize: ", image)
     print("Image Shape: ", image.shape )
 
-    #Expanding (1, 150,150,3)
+    #Expanding (1, 224, 224, 3)
     processed_image = np.expand_dims(image, axis=0)
     print("TF Image Resize: ", processed_image)
     print("Image Shape: ", processed_image.shape )
