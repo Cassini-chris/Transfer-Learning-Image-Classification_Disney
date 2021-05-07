@@ -25,7 +25,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-
     return render_template('web-interface.html')
 
 os.environ["GCLOUD_PROJECT"] = "{ENTER YOUR CLOUD PROJECT}"
