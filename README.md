@@ -13,7 +13,9 @@ The Model is deployed on Google App Engine and uses Flask as a microframework.
 
 ##### [>> Detailed article](https://epicml.net/_articles/2020/disney_image_classification/image_classification.php "Disney Princess Classification Article")
 
-#### Image classification problem:
-Image classification is a supervised learning problem. We define a set of target classes (in our case Disney Princesses), and train a model to recognize them using labeled example photos. In our example, we will make use of TensorFlow 2.x in order to build, train, and optimize our model.
+#### Why RunCulator:
+RunCulator is an app that provides an Easy to use and Mobile Friendly >> Pace, Distance, Duration Calculator.
+#### Who Uses RunCulator?
+Sports calculators are useful for both new athletes and professional athletes.
 
 ![alt text](https://github.com/cassini-chris/Transfer-Learning-Image-Classification_Disney/blob/main/_GITHUB/readme/images/background.png?raw=true)
